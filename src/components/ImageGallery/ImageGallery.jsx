@@ -11,7 +11,6 @@ const Status = {
   PENDING: 'pending',
   RESOLVED: 'resolved',
   REJECTED: 'rejected',
-  imageGalleryRef: React.createRef(),
 };
 
 class ImageGallery extends Component {
