@@ -1,4 +1,4 @@
-const API_KEY = '35568856-099cdd83ac58028a9b45ec202';
+const API_KEY = '35862645-57cfdba545019c0ba0c41aa5b';
 
 function fetchImages(name, number) {
   return fetch(
