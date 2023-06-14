@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { animateScrollTo } from 'scroll-into-view-if-needed';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import Loader from '../Loader/Loader';
 import Button from '../Button/Button';
@@ -11,6 +12,7 @@ const Status = {
   PENDING: 'pending',
   RESOLVED: 'resolved',
   REJECTED: 'rejected',
+  imageGalleryRef: React.createRef(),
 };
 
 class ImageGallery extends Component {
@@ -94,7 +96,7 @@ class ImageGallery extends Component {
     if (status === 'resolved') {
       return (
         <>
-          <ul className={css.ImageGallery}>
+          <ul className={css.ImageGallery} ref={this.state.imageGalleryRef}>
             {imagesArr.map(({ id, webformatURL, largeImageURL, tags }) => (
               <ImageGalleryItem
                 key={id}
