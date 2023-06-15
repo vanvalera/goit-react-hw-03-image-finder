@@ -24,16 +24,21 @@ class ImageGallery extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.searchName !== prevState.searchName) {
-      return { page: 1, searchName: nextProps.searchName, imagesArr: [] };
+    const { searchName } = nextProps;
+    if (searchName !== prevState.searchName) {
+      return {
+        page: 1,
+        searchName,
+        imagesArr: [],
+      };
     }
     return null;
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { imagesArr, searchName, page } = this.state;
-    const prevName = prevProps.searchName;
-    const prevPage = prevState.page;
+    const { searchName, page } = this.state;
+    const { searchName: prevName } = prevProps;
+    const { page: prevPage } = prevState;
 
     if (prevPage !== page || prevName !== searchName) {
       this.setState({ status: Status.PENDING });
@@ -42,13 +47,13 @@ class ImageGallery extends Component {
         .fetchImages(searchName, page)
         .then(imagesObj => {
           if (imagesObj.hits.length === 0) {
-            return Promise.reject(new Error(`${searchName} not found`));
+            throw new Error(`${searchName} not found`);
           }
-          this.setState({
-            imagesArr: [...imagesArr, ...imagesObj.hits],
+          this.setState(prevState => ({
+            imagesArr: [...prevState.imagesArr, ...imagesObj.hits],
             totalHits: imagesObj.totalHits,
             status: Status.RESOLVED,
-          });
+          }));
         })
         .catch(error => this.setState({ error, status: Status.REJECTED }));
     }
@@ -59,6 +64,11 @@ class ImageGallery extends Component {
       page: prevState.page + 1,
     }));
   };
+
+  renderError() {
+    const { error } = this.state;
+    return <div className={css.ErrorMessage}>{error.message}</div>;
+  }
 
   renderImageGalleryItems() {
     const { imagesArr } = this.state;
@@ -75,15 +85,14 @@ class ImageGallery extends Component {
     ));
   }
 
-  render() {
-    const { error, status, totalHits } = this.state;
-    const { searchName } = this.props;
+  renderImageGallery() {
+    const { imagesArr, status, totalHits } = this.state;
 
-    if (status === 'idle') {
+    if (status === Status.IDLE) {
       return null;
     }
 
-    if (status === 'pending') {
+    if (status === Status.PENDING) {
       return (
         <>
           <ul className={css.ImageGallery}>{this.renderImageGalleryItems()}</ul>
@@ -92,20 +101,24 @@ class ImageGallery extends Component {
       );
     }
 
-    if (status === 'rejected') {
-      return <div className={css.ErrorMessage}>{error.message}</div>;
+    if (status === Status.REJECTED) {
+      return this.renderError();
     }
 
-    if (status === 'resolved') {
+    if (status === Status.RESOLVED) {
       return (
         <>
           <ul className={css.ImageGallery}>{this.renderImageGalleryItems()}</ul>
-          {totalHits > this.state.imagesArr.length && (
+          {totalHits > imagesArr.length && (
             <Button onClick={this.handlePageIncrement} />
           )}
         </>
       );
     }
+  }
+
+  render() {
+    return this.renderImageGallery();
   }
 }
 
