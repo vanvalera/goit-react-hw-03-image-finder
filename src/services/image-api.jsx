@@ -8,8 +8,8 @@ function fetchImages(name, number) {
   });
 }
 
-const api = {
+const imagesAPI = {
   fetchImages,
 };
 
-export default api;
+export default imagesAPI;

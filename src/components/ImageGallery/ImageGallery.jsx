@@ -60,9 +60,24 @@ class ImageGallery extends Component {
     }));
   };
 
+  renderImageGalleryItems() {
+    const { imagesArr } = this.state;
+    const { showModal } = this.props;
+
+    return imagesArr.map(({ id, webformatURL, largeImageURL, tags }) => (
+      <ImageGalleryItem
+        key={id}
+        webformatImage={webformatURL}
+        largeImage={largeImageURL}
+        showModal={showModal}
+        description={tags}
+      />
+    ));
+  }
+
   render() {
-    const { imagesArr, error, status, page, totalHits } = this.state;
-    const { searchName, showModal } = this.props;
+    const { error, status, totalHits } = this.state;
+    const { searchName } = this.props;
 
     if (status === 'idle') {
       return null;
@@ -71,18 +86,8 @@ class ImageGallery extends Component {
     if (status === 'pending') {
       return (
         <>
-          <ul className={css.ImageGallery}>
-            {imagesArr.map(({ id, webformatURL, largeImageURL, tags }) => (
-              <ImageGalleryItem
-                key={id}
-                webformatImage={webformatURL}
-                largeImage={largeImageURL}
-                showModal={showModal}
-                description={tags}
-              />
-            ))}
-          </ul>
-          <Loader />;
+          <ul className={css.ImageGallery}>{this.renderImageGalleryItems()}</ul>
+          <Loader />
         </>
       );
     }
@@ -94,18 +99,8 @@ class ImageGallery extends Component {
     if (status === 'resolved') {
       return (
         <>
-          <ul className={css.ImageGallery}>
-            {imagesArr.map(({ id, webformatURL, largeImageURL, tags }) => (
-              <ImageGalleryItem
-                key={id}
-                webformatImage={webformatURL}
-                largeImage={largeImageURL}
-                showModal={showModal}
-                description={tags}
-              />
-            ))}
-          </ul>
-          {totalHits > imagesArr.length && (
+          <ul className={css.ImageGallery}>{this.renderImageGalleryItems()}</ul>
+          {totalHits > this.state.imagesArr.length && (
             <Button onClick={this.handlePageIncrement} />
           )}
         </>
