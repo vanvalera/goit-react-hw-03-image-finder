@@ -94,7 +94,7 @@ class ImageGallery extends Component {
     if (status === 'resolved') {
       return (
         <>
-          <ul className={css.ImageGallery} ref={this.state.imageGalleryRef}>
+          <ul className={css.ImageGallery}>
             {imagesArr.map(({ id, webformatURL, largeImageURL, tags }) => (
               <ImageGalleryItem
                 key={id}
@@ -106,11 +106,7 @@ class ImageGallery extends Component {
             ))}
           </ul>
           {totalHits > imagesArr.length && (
-            <Button
-              page={page}
-              searchName={searchName}
-              onClick={this.handlePageIncrement}
-            />
+            <Button onClick={this.handlePageIncrement} />
           )}
         </>
       );
