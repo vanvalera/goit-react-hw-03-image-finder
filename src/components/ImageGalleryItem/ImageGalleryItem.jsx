@@ -1,35 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import css from './ImageGalleryItem.module.css';
+import PropTypes from 'prop-types';
 
-const ImageGalleryItem = ({
-  showModal,
-  webformatImage,
-  largeImage,
-  description,
-}) => (
-  <li className={css.ImageGalleryItem}>
-    <button
-      className={css.imageItemButton}
-      type="button"
-      onClick={() => {
-        showModal(largeImage, description);
-      }}
-    >
+export default function ImageGalleryItem({ webformatURL, index, openModal }) {
+  return (
+    <li className={css.ImageGalleryItem}>
       <img
-        className={css.ImageGalleryItem_image}
-        src={webformatImage}
-        alt={description}
+        className={css.ImageGalleryItem__image}
+        src={webformatURL}
+        onClick={() => openModal(index)}
+        alt=""
       />
-    </button>
-  </li>
-);
-
-export default ImageGalleryItem;
+    </li>
+  );
+}
 
 ImageGalleryItem.propTypes = {
-  webformatImage: PropTypes.string.isRequired,
-  showModal: PropTypes.func.isRequired,
-  largeImage: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  webformatURL: PropTypes.string.isRequired,
+  openModal: PropTypes.func.isRequired,
 };

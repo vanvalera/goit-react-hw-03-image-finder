@@ -1,4 +1,4 @@
-@import-normalize; /* bring in normalize.css styles */
+/* @import-normalize; bring in normalize.css styles */
 
 html {
   box-sizing: border-box;
@@ -24,9 +24,6 @@ body {
 
 img {
   display: block;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  max-width: 100%;
+  height: auto;
 }
