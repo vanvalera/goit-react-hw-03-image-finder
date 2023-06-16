@@ -18,6 +18,7 @@ export class App extends Component {
     showModal: false,
     isLoading: false,
     error: null,
+    totalImages: 0,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -38,6 +39,7 @@ export class App extends Component {
                   }));
               });
           this.setState({ isLoading: false });
+          this.setState({ totalImages: data.data.total });
         });
       } catch (error) {
         this.setState({ error, isLoading: false });
@@ -76,7 +78,8 @@ export class App extends Component {
 
   render() {
     const { toggleModal, openModal, nextPage, onSubmit } = this;
-    const { images, isLoading, largeImage, showModal } = this.state;
+    const { images, isLoading, largeImage, showModal, totalImages } =
+      this.state;
 
     return (
       <div className={css.App}>
@@ -89,7 +92,9 @@ export class App extends Component {
         )}
         {isLoading && <Loader />}
         <ToastContainer autoClose={3500} />
-        {images.length >= 12 && <Button nextPage={nextPage} />}
+        {images.length >= 12 && images.length < totalImages && (
+          <Button nextPage={nextPage} />
+        )}
       </div>
     );
   }
