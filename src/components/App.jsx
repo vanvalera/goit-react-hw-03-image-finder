@@ -22,28 +22,33 @@ export class App extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const prevPage = prevState.page;
-    const prevSearchData = prevState.searchData;
-    const { searchData, page, images } = this.state;
+    const { page, searchData} = this.state;
+    const { page: prevPage, searchData: prevSearchData } = prevState;
+  
     if (prevPage !== page || prevSearchData !== searchData) {
       try {
         this.setState({ isLoading: true });
         const response = fetchImagesWithQuery(searchData, page);
-        response.then(data => {
-          data.data.hits.length === 0
-            ? toast.error('Nothing found')
-            : data.data.hits.forEach(({ id, webformatURL, largeImageURL }) => {
-                !images.some(image => image.id === id) &&
-                  this.setState(({ images }) => ({
-                    images: [...images, { id, webformatURL, largeImageURL }],
-                  }));
-              });
-          this.setState({ isLoading: false });
-          this.setState({ totalImages: data.data.total });
+  
+        response.then(({ data }) => {
+          if (data.hits.length === 0) {
+            toast.error('Nothing found');
+          } else {
+            const newImages = data.hits.map(({ id, webformatURL, largeImageURL }) => ({
+              id,
+              webformatURL,
+              largeImageURL,
+            }));
+  
+            this.setState(prevState => ({
+              images: [...prevState.images, ...newImages],
+              totalImages: data.total,
+              isLoading: false,
+            }));
+          }
         });
       } catch (error) {
         this.setState({ error, isLoading: false });
-      } finally {
       }
     }
   }
@@ -51,11 +56,14 @@ export class App extends Component {
   onSubmit = searchData => {
     if (searchData.trim() === '') {
       return toast.error('Enter the meaning for search');
-    } else if (searchData === this.state.searchData) {
+    }
+  
+    if (searchData === this.state.searchData) {
       return;
     }
+  
     this.setState({
-      searchData: searchData,
+      searchData,
       page: 1,
       images: [],
     });
